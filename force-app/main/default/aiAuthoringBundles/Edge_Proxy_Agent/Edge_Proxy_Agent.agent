@@ -1,0 +1,118 @@
+system:
+    instructions: "You are the Edge Proxy Agent. Your goal is to answer queries about product pricing, SLA tiers, and FAQ documentation. You route all database and lookup requests through the high-performance Cloudflare Edge Caching Proxy to save API quota and speed up response times. At the end of the conversation or when requested, log the session telemetry."
+    messages:
+        welcome: "Hello, I'm the Edge Proxy Agent. I query pricing, SLAs, and FAQs via a high-performance Cloudflare and Upstash edge cache. How can I help you today?"
+        error: "Sorry, it looks like something went wrong at the edge."
+
+config:
+    developer_name: "Edge_Proxy_Agent"
+    agent_label: "Edge Proxy Agent"
+    description: "An agent with integrated edge cache proxy, telemetry tracking, and security firewall."
+    default_agent_user: "UPDATE_WITH_YOUR_DEFAULT_AGENT_USER"
+
+variables:
+    last_search_status: mutable string = ""
+        description: "The cache status (HIT or MISS) of the last executed edge search"
+
+language:
+    default_locale: "en_US"
+    additional_locales: ""
+    all_additional_locales: False
+
+start_agent agent_router:
+    description: "Determine the appropriate subagent based on user input"
+    reasoning:
+        actions:
+            go_to_crm_search: @utils.transition to @subagent.crm_search
+            go_to_telemetry_reporting: @utils.transition to @subagent.telemetry_reporting
+            go_to_off_topic: @utils.transition to @subagent.off_topic
+
+subagent crm_search:
+    label: "CRM Search"
+    description: "Handles user inquiries about product pricing, support SLAs, and general documentation search."
+
+    reasoning:
+        instructions: ->
+            | Your job is to search the database. When the user asks for pricing, SLA, or documentation details, run the {!@actions.perform_search} action.
+              Summarize the search results returned in the `apiResult` parameter.
+              Always let the user know if the response was a cache hit or miss, and mention the latency (e.g. "Edge Cache: HIT (4ms)").
+        actions:
+            perform_search: @actions.perform_search
+                with query = ...
+                set @variables.last_search_status = @outputs.cacheStatus
+
+    actions:
+        perform_search:
+            description: "Queries the Edge Caching Proxy for pricing, support SLA tiers, and FAQ details."
+            label: "Perform Edge Search"
+            target: "apex://AgentSearchAction"
+            include_in_progress_indicator: True
+            progress_indicator_message: "Searching edge cache..."
+            inputs:
+                query: string
+                    label: "Search Query"
+                    description: "The topic or keyword to search for (e.g., pricing, SLA, support)"
+                    is_required: True
+            outputs:
+                apiResult: string
+                    label: "API Search Result"
+                    description: "JSON-serialized search results returned from the edge proxy"
+                    is_displayable: True
+                    filter_from_agent: False
+                cacheStatus: string
+                    label: "Cache Status"
+                    description: "HIT or MISS status from Upstash Redis"
+                    is_displayable: True
+                    filter_from_agent: False
+                latencyMs: object
+                    complex_data_type_name: "lightning__integerType"
+                    label: "Edge Latency"
+                    description: "Latency of the response in milliseconds"
+                    is_displayable: True
+                    filter_from_agent: False
+
+subagent telemetry_reporting:
+    label: "Telemetry Reporting"
+    description: "Logs conversation token metrics and estimated costs to the Cloudflare dashboard database."
+
+    reasoning:
+        instructions: ->
+            | When the user asks to log metrics, finish the session, or output a telemetry report, call the {!@actions.report_telemetry} action.
+              Provide a confirmation message once logged successfully.
+        actions:
+            report_telemetry: @actions.report_telemetry
+                with promptTokens = ...
+                with completionTokens = ...
+
+    actions:
+        report_telemetry:
+            description: "Reports prompt and completion token sizes to the telemetry system."
+            label: "Log Telemetry"
+            target: "apex://TelemetryLoggerAction"
+            include_in_progress_indicator: True
+            progress_indicator_message: "Logging telemetry to Redis..."
+            inputs:
+                promptTokens: object
+                    complex_data_type_name: "lightning__integerType"
+                    label: "Prompt Tokens"
+                    description: "Number of input prompt tokens used in this session"
+                    is_required: True
+                completionTokens: object
+                    complex_data_type_name: "lightning__integerType"
+                    label: "Completion Tokens"
+                    description: "Number of output completion tokens generated in this session"
+                    is_required: True
+            outputs:
+                success: boolean
+                    label: "Success Status"
+                    description: "Whether the logging was successfully recorded at the edge"
+                    is_displayable: True
+                    filter_from_agent: False
+
+subagent off_topic:
+    label: "Off Topic"
+    description: "Politely informs user when queries are outside of pricing, SLA, and telemetry scope."
+
+    reasoning:
+        instructions: ->
+            | Redirection instructions: Politely explain that your capabilities are focused on CRM search (pricing, FAQs, SLAs) and cost logging.

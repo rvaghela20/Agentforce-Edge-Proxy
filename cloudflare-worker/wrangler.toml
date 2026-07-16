@@ -1,0 +1,20 @@
+name = "agentforce-edge-proxy"
+main = "index.js"
+compatibility_date = "2026-07-15"
+
+[vars]
+# In production, these should be configured as secret environment variables:
+# - UPSTASH_REDIS_REST_URL
+# - UPSTASH_REDIS_REST_TOKEN
+# - SLACK_WEBHOOK_URL
+# - SLACK_SIGNING_SECRET
+# - SALESFORCE_CLIENT_ID
+# - SALESFORCE_CLIENT_SECRET
+# - SALESFORCE_REFRESH_TOKEN
+# - SALESFORCE_ORG_URL
+# For testing/local development, set env variables in a local .dev.vars file:
+# PROXY_SHARED_SECRET = "your-local-secret"
+
+[triggers]
+# Run predictive cache warming cron task every hour
+crons = ["0 * * * *"]

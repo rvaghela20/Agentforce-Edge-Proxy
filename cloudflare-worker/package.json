@@ -1,0 +1,17 @@
+{
+  "name": "agentforce-edge-proxy",
+  "version": "1.0.0",
+  "description": "Intelligent edge proxy for Salesforce Agentforce integration with Upstash Redis and Slack.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.3"
+  },
+  "devDependencies": {
+    "wrangler": "^4.110.0"
+  }
+}
