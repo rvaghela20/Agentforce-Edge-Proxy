@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install root deps
+        run: npm ci
+
+      - name: prettier check
+        run: npm run prettier:verify
+
+      - name: install worker deps
+        working-directory: cloudflare-worker
+        run: npm ci
+
+      - name: run tests
+        working-directory: cloudflare-worker
+        run: npm test
+
+      - name: audit deps
+        working-directory: cloudflare-worker
+        run: npm audit --audit-level=high
