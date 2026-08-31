@@ -7,9 +7,24 @@ export function getMockSalesforceData(query) {
     return JSON.stringify({
       source: "Salesforce CRM (Mock)",
       results: [
-        { name: "Enterprise Support License", code: "SL-ENT-01", price: "$150/user/month", cached: true },
-        { name: "Standard Support License", code: "SL-STD-02", price: "$75/user/month", cached: true },
-        { name: "Developer Sandbox Addon", code: "SL-DEV-03", price: "$50/sandbox/month", cached: true }
+        {
+          name: "Enterprise Support License",
+          code: "SL-ENT-01",
+          price: "$150/user/month",
+          cached: true
+        },
+        {
+          name: "Standard Support License",
+          code: "SL-STD-02",
+          price: "$75/user/month",
+          cached: true
+        },
+        {
+          name: "Developer Sandbox Addon",
+          code: "SL-DEV-03",
+          price: "$50/sandbox/month",
+          cached: true
+        }
       ]
     });
   }
@@ -17,16 +32,30 @@ export function getMockSalesforceData(query) {
     return JSON.stringify({
       source: "Salesforce CRM (Mock)",
       results: [
-        { topic: "Gold SLA Tier", responseTime: "Under 1 Hour", channel: "Slack & Video Call" },
-        { topic: "Silver SLA Tier", responseTime: "Under 4 Hours", channel: "Slack & Email" },
-        { topic: "Bronze SLA Tier", responseTime: "Under 8 Hours", channel: "Email Only" }
+        {
+          topic: "Gold SLA Tier",
+          responseTime: "Under 1 Hour",
+          channel: "Slack & Video Call"
+        },
+        {
+          topic: "Silver SLA Tier",
+          responseTime: "Under 4 Hours",
+          channel: "Slack & Email"
+        },
+        {
+          topic: "Bronze SLA Tier",
+          responseTime: "Under 8 Hours",
+          channel: "Email Only"
+        }
       ]
     });
   }
   return JSON.stringify({
     source: "Salesforce CRM (Mock)",
     results: [
-      { message: `No specific match for '${query}'. Returning general FAQ documentation index.` },
+      {
+        message: `No specific match for '${query}'. Returning general FAQ documentation index.`
+      },
       { doc: "Standard Operating Procedures v4.2" },
       { doc: "Customer Success Onboarding Checklist" }
     ]

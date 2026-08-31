@@ -38,7 +38,8 @@ export function checkInjection(input) {
   }
 
   for (const pat of PROMPT_INJECTION_PATTERNS) {
-    if (pat.test(input)) return { blocked: true, threatType: "Prompt Injection" };
+    if (pat.test(input))
+      return { blocked: true, threatType: "Prompt Injection" };
   }
   for (const pat of SOQL_INJECTION_PATTERNS) {
     if (pat.test(input)) return { blocked: true, threatType: "SOQL Injection" };

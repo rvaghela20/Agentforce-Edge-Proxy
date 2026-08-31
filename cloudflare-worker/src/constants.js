@@ -5,4 +5,4 @@ export const INPUT_MAX_LENGTH = 2000;
 
 // GPT-4o-mini rough rates
 export const COST_PER_INPUT_TOKEN = 0.15 / 1_000_000;
-export const COST_PER_OUTPUT_TOKEN = 0.60 / 1_000_000;
+export const COST_PER_OUTPUT_TOKEN = 0.6 / 1_000_000;

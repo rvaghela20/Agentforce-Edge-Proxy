@@ -26,6 +26,8 @@ describe("authorizeRequest", () => {
 
   it("fails secure when env secret is not set", () => {
     expect(authorizeRequest(fakeReq("anything"), {})).toBe(false);
-    expect(authorizeRequest(fakeReq("anything"), { PROXY_SHARED_SECRET: "" })).toBe(false);
+    expect(
+      authorizeRequest(fakeReq("anything"), { PROXY_SHARED_SECRET: "" })
+    ).toBe(false);
   });
 });

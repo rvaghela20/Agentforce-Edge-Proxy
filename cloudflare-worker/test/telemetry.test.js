@@ -13,7 +13,7 @@ describe("estimateCost", () => {
 
   it("calculates with only output tokens", () => {
     const cost = estimateCost(0, 1_000_000);
-    expect(cost).toBeCloseTo(0.60, 4);
+    expect(cost).toBeCloseTo(0.6, 4);
   });
 
   it("calculates mixed tokens", () => {

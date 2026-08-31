@@ -36,4 +36,3 @@ public with sharing class EdgeProxyService {
     }
   }
 }
-
