@@ -105,4 +105,33 @@ Designed with edge computing best practices to ensure high performance and low o
    sf project deploy start
    ```
 3. Assign the Permission Set Group `AFDX_User_Perms` to your integration users.
-4. Populate the custom credentials secret in the Salesforce UI under **Setup > Named Credentials > External Credentials** to match the value of `PROXY_SHARED_SECRET` in your worker environment.
+4. Create the **EdgeProxySettings__c** Custom Setting and set the `Shared_Secret__c` field to match `PROXY_SHARED_SECRET` in your worker environment.
+
+---
+
+## Running without external accounts
+
+The worker is designed to run locally with zero external dependencies. If Redis or Salesforce creds are missing from `.dev.vars`, it falls back to:
+
+- **Mock Redis** — a stub client that returns empty/default values
+- **Mock Salesforce** — canned pricing, SLA, and FAQ data
+
+Just run `npm run dev` inside `cloudflare-worker/` without filling in any secrets and it works.
+
+---
+
+## Testing
+
+```bash
+cd cloudflare-worker
+npm test           # run full suite
+npm run test:watch # watch mode during dev
+```
+
+Tests cover the firewall patterns, auth, Redis client fallback, Salesforce mock data, telemetry cost math, and Slack dashboard card building.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
