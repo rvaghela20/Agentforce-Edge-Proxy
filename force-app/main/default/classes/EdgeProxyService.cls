@@ -1,7 +1,6 @@
 public with sharing class EdgeProxyService {
   /**
-   * Executes a POST callout to the Cloudflare Worker via Named Credentials.
-   * Integrates edge caching, firewalls, and telemetry logging.
+   * POST callout to the Cloudflare Worker via Named Credentials.
    */
   public static String makePostCallout(String path, String payload) {
     Http http = new Http();
@@ -9,23 +8,25 @@ public with sharing class EdgeProxyService {
     request.setEndpoint('callout:Cloudflare_Edge_Proxy' + path);
     request.setMethod('POST');
     request.setHeader('Content-Type', 'application/json');
-    request.setHeader('X-Proxy-Shared-Secret', 'secure-edge-proxy-token-2026');
-    request.setTimeout(30000); // Set timeout to 30 seconds for edge callouts
+
+    // Pull the shared secret from a Custom Setting instead of hardcoding it.
+    // Set this in Setup > Custom Settings > Edge Proxy Settings.
+    EdgeProxySettings__c settings = EdgeProxySettings__c.getOrgDefaults();
+    String secret = settings != null ? settings.Shared_Secret__c : null;
+    if (String.isBlank(secret)) {
+      throw new CalloutException(
+        'Edge proxy shared secret is not configured. Set it in EdgeProxySettings__c.'
+      );
+    }
+    request.setHeader('X-Proxy-Shared-Secret', secret);
+    request.setTimeout(30000);
     request.setBody(payload);
 
-    System.debug('Initiating edge callout to: ' + path);
     HttpResponse response = http.send(request);
 
     if (response.getStatusCode() == 200) {
-      System.debug('Callout successful. Response: ' + response.getBody());
       return response.getBody();
     } else {
-      System.debug(
-        'Callout failed with status: ' +
-          response.getStatusCode() +
-          ' body: ' +
-          response.getBody()
-      );
       throw new CalloutException(
         'Cloudflare Worker Error: (' +
           response.getStatusCode() +
@@ -35,3 +36,4 @@ public with sharing class EdgeProxyService {
     }
   }
 }
+

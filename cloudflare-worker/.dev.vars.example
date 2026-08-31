@@ -1,0 +1,15 @@
+# Copy this to .dev.vars and fill in real values for local testing.
+# .dev.vars is gitignored so your secrets stay local.
+
+PROXY_SHARED_SECRET="change-me"
+
+# UPSTASH_REDIS_REST_URL="https://your-upstash-url.upstash.io"
+# UPSTASH_REDIS_REST_TOKEN="your-upstash-token"
+
+# SLACK_WEBHOOK_URL="https://hooks.slack.com/services/..."
+
+# SALESFORCE_ORG_URL="https://your-instance.my.salesforce.com"
+# SALESFORCE_CLIENT_ID=""
+# SALESFORCE_CLIENT_SECRET=""
+# SALESFORCE_USERNAME=""
+# SALESFORCE_PASSWORD=""
