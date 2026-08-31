@@ -1,6 +1,6 @@
 # Agentforce Intelligent Edge Proxy
 
-A state-of-the-art serverless integration layer between **Salesforce Agentforce**, **Cloudflare Workers**, **Upstash Redis**, and **Slack** designed to control API costs, mitigate prompt injection attacks, achieve sub-millisecond caching, dynamically invalidate expired data, and pre-warm key tables using background CRON tasks.
+Serverless proxy sitting between Salesforce Agentforce and Cloudflare Workers. Handles edge caching (Upstash Redis), prompt/SOQL injection blocking, cost tracking, and Slack alerts — all without touching the Salesforce API on cache hits.
 
 ---
 
